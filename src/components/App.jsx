@@ -1,4 +1,6 @@
 import { Component } from 'react';
+
+import { Box, StyledTitle } from './StyledComponent';
 import { ContactsList } from './ContactsList/ContactsList';
 import { Filter } from './Filter/Filter';
 import { MyForm } from './Form/MyForm';
@@ -6,7 +8,6 @@ import { MyForm } from './Form/MyForm';
 export class App extends Component {
   state = {
     contacts: [
-      { name: 'Orest Br', id: '1', number: '459-12-56' },
       { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
       { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
       { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
@@ -60,12 +61,12 @@ export class App extends Component {
     const visibleContacts = this.getVisibleContacts();
 
     return (
-      <div>
-        <h1>Phonebook</h1>
+      <Box as="main" p={4}>
+        <StyledTitle>Phonebook</StyledTitle>
 
         <MyForm onSubmit={this.addConntacts} />
 
-        <h2>Contacts</h2>
+        <StyledTitle as="h2">Contacts</StyledTitle>
 
         <Filter value={filter} onChange={this.changeFilter} />
 
@@ -73,7 +74,7 @@ export class App extends Component {
           contacts={visibleContacts}
           remuveContact={this.remuveContact}
         />
-      </div>
+      </Box>
     );
   }
 }

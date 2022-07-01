@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 export const ContactsItem = ({ contacts, remuveContact }) => {
   const contactsItems = contacts.map(({ name, id, number }) => {
     return (
@@ -11,4 +13,9 @@ export const ContactsItem = ({ contacts, remuveContact }) => {
     );
   });
   return <>{contactsItems}</>;
+};
+
+ContactsItem.propTypes = {
+  contacts: PropTypes.arrayOf(PropTypes.shape).isRequired,
+  remuveContact: PropTypes.func.isRequired,
 };

@@ -1,6 +1,8 @@
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { nanoid } from 'nanoid';
+import PropTypes from 'prop-types';
+import { StyledForm, ErrorText } from './MyForm.styled';
 
 const validationSchema = Yup.object({
   name: Yup.string().required('Name is required'),
@@ -12,14 +14,14 @@ export const MyForm = ({ onSubmit }) => {
     <Formik
       initialValues={{ name: '', id: '', number: '' }}
       validationSchema={validationSchema}
-      onSubmit={(values, { setSubmitting }) => {
+      onSubmit={(values, { resetForm }) => {
         values.id = nanoid();
-        console.log(values);
         onSubmit(values);
-        setSubmitting(false);
+        resetForm();
       }}
     >
-      <Form autoComplete="off">
+      <StyledForm autoComplete="off">
+        <label htmlFor="name">Name</label>
         <Field
           type="text"
           name="name"
@@ -27,8 +29,12 @@ export const MyForm = ({ onSubmit }) => {
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
         />
-        <ErrorMessage name="name" />
+        <ErrorMessage
+          name="name"
+          render={message => <ErrorText>{message}</ErrorText>}
+        />
 
+        <label htmlFor="number">Number</label>
         <Field
           type="tel"
           name="number"
@@ -36,10 +42,17 @@ export const MyForm = ({ onSubmit }) => {
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
         />
-        <ErrorMessage name="number" />
+        <ErrorMessage
+          name="number"
+          render={message => <ErrorText>{message}</ErrorText>}
+        />
 
         <button type="submit">Add contact</button>
-      </Form>
+      </StyledForm>
     </Formik>
   );
+};
+
+MyForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
 };
