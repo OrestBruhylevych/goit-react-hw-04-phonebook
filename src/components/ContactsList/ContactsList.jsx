@@ -3,11 +3,11 @@ import { ContactsItem } from './ContactsItem';
 
 export class ContactsList extends Component {
   render() {
-    const { contacts } = this.props;
+    const { contacts, remuveContact } = this.props;
 
     return (
       <ul>
-        <ContactsItem contacts={contacts} />
+        <ContactsItem contacts={contacts} remuveContact={remuveContact} />
       </ul>
     );
   }
