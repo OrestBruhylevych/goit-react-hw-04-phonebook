@@ -17,11 +17,13 @@ export class App extends Component {
   };
 
   addConntacts = value => {
+    const nameLowerCase = value.name.toLowerCase();
+
     this.setState(pS => {
       const { contacts } = pS;
 
       const isName = ({ name }) => {
-        return name.toLowerCase() === value.name.toLowerCase();
+        return name.toLowerCase() === nameLowerCase;
       };
 
       const newContacts = contacts.find(isName);
@@ -29,6 +31,7 @@ export class App extends Component {
       if (newContacts) {
         window.alert(`${value.name} is already in contacts.`);
       }
+
       return {
         contacts: newContacts ? [...pS.contacts] : [...pS.contacts, value],
       };
