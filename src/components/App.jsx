@@ -19,17 +19,18 @@ export class App extends Component {
   addConntacts = value => {
     this.setState(pS => {
       const { contacts } = pS;
-      const newContacts = contacts.filter(
-        contact => contact.name === value.name
-      );
 
-      if (newContacts.length !== 0) {
+      const isName = ({ name }) => {
+        return name.toLowerCase() === value.name.toLowerCase();
+      };
+
+      const newContacts = contacts.find(isName);
+
+      if (newContacts) {
         window.alert(`${value.name} is already in contacts.`);
       }
-
       return {
-        contacts:
-          newContacts.length === 0 ? [...pS.contacts, value] : [...pS.contacts],
+        contacts: newContacts ? [...pS.contacts] : [...pS.contacts, value],
       };
     });
   };
