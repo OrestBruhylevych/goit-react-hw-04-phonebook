@@ -25,7 +25,7 @@ export class App extends Component {
         this.setState({ contacts });
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
     }
   }
 
