@@ -29,8 +29,8 @@ export class App extends Component {
     }
   }
 
-  componentDidUpdate(pP, pS) {
-    if (pS.contacts !== this.state.contacts) {
+  componentDidUpdate(_, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
       const contactsJSON = JSON.stringify(this.state.contacts);
       localStorage.setItem(LS_KEY, contactsJSON);
     }
@@ -39,8 +39,8 @@ export class App extends Component {
   addConntacts = value => {
     const nameLowerCase = value.name.toLowerCase();
 
-    this.setState(pS => {
-      const { contacts } = pS;
+    this.setState(prevState => {
+      const { contacts } = prevState;
 
       const isName = ({ name }) => {
         return name.toLowerCase() === nameLowerCase;
@@ -53,7 +53,9 @@ export class App extends Component {
       }
 
       return {
-        contacts: newContacts ? [...pS.contacts] : [...pS.contacts, value],
+        contacts: newContacts
+          ? [...prevState.contacts]
+          : [...prevState.contacts, value],
       };
     });
   };
