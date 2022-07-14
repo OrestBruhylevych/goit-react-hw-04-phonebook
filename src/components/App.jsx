@@ -1,79 +1,41 @@
-import { Component } from 'react';
+import { useState } from 'react';
 
 import { Box, StyledTitle } from './StyledComponent';
 import { ContactsList } from './ContactsList/ContactsList';
 import { Filter } from './Filter/Filter';
 import { MyForm } from './Form/MyForm';
 
+import { useLocalStorage } from '../hooks/useLocalStorage';
+
+const contactsDefault = [
+  { id: 'id-1', name: 'Rosie Simpson', number: '+459-12-56' },
+  { id: 'id-2', name: 'Hermione Kline', number: '+443-89-12' },
+  { id: 'id-3', name: 'Eden Clements', number: '+645-17-79' },
+  { id: 'id-4', name: 'Annie Copeland', number: '+227-91-26' },
+];
 const LS_KEY = 'contacts';
 
-export class App extends Component {
-  state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '+459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '+443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '+645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '+227-91-26' },
-    ],
-    filter: '',
-  };
+export function App() {
+  const [contacts, setContacts] = useLocalStorage(LS_KEY, contactsDefault);
+  const [filter, setFilter] = useState('');
 
-  componentDidMount() {
-    try {
-      const contacts = JSON.parse(localStorage.getItem(LS_KEY));
-      if (contacts) {
-        this.setState({ contacts });
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
-
-  componentDidUpdate(_, prevState) {
-    if (prevState.contacts !== this.state.contacts) {
-      const contactsJSON = JSON.stringify(this.state.contacts);
-      localStorage.setItem(LS_KEY, contactsJSON);
-    }
-  }
-
-  addConntacts = value => {
+  const addConntacts = value => {
     const nameLowerCase = value.name.toLowerCase();
 
-    this.setState(prevState => {
-      const { contacts } = prevState;
+    setContacts(prevState => {
+      const newContact = prevState.find(
+        contact => contact.name.toLocaleLowerCase() === nameLowerCase
+      );
 
-      const isName = ({ name }) => {
-        return name.toLowerCase() === nameLowerCase;
-      };
-
-      const newContacts = contacts.find(isName);
-
-      if (newContacts) {
+      if (newContact) {
         window.alert(`${value.name} is already in contacts.`);
       }
 
-      return {
-        contacts: newContacts
-          ? [...prevState.contacts]
-          : [...prevState.contacts, value],
-      };
+      return newContact ? [...prevState] : [...prevState, value];
     });
   };
 
-  remuveContact = id => {
-    const { contacts } = this.state;
-    const newContacts = contacts.filter(contact => contact.id !== id);
-
-    this.setState({ contacts: [...newContacts] });
-  };
-
-  changeFilter = e => {
-    this.setState({ filter: e.currentTarget.value });
-  };
-
-  getVisibleContacts = () => {
-    const { filter, contacts } = this.state;
-
+  const getVisibleContacts = () => {
     const normalizedFilter = filter.toLowerCase();
     const visibleContacts = contacts.filter(contact =>
       contact.name.toLowerCase().includes(normalizedFilter)
@@ -82,25 +44,30 @@ export class App extends Component {
     return visibleContacts;
   };
 
-  render() {
-    const { filter } = this.state;
-    const visibleContacts = this.getVisibleContacts();
+  const remuveContact = id => {
+    const newContacts = contacts.filter(contact => contact.id !== id);
 
-    return (
-      <Box as="main" p={4}>
-        <StyledTitle>Phonebook</StyledTitle>
+    setContacts([...newContacts]);
+  };
 
-        <MyForm onSubmit={this.addConntacts} />
+  const changeFilter = e => {
+    setFilter(e.currentTarget.value);
+  };
 
-        <StyledTitle as="h2">Contacts</StyledTitle>
+  return (
+    <Box as="main" p={4}>
+      <StyledTitle>Phonebook</StyledTitle>
 
-        <Filter value={filter} onChange={this.changeFilter} />
+      <MyForm onSubmit={addConntacts} />
 
-        <ContactsList
-          contacts={visibleContacts}
-          remuveContact={this.remuveContact}
-        />
-      </Box>
-    );
-  }
+      <StyledTitle as="h2">Contacts</StyledTitle>
+
+      <Filter value={filter} onChange={changeFilter} />
+
+      <ContactsList
+        contacts={getVisibleContacts()}
+        remuveContact={remuveContact}
+      />
+    </Box>
+  );
 }
